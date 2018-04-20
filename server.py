@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 import modules.cardgen as cardgen
 import json
 import csv
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/cards/generate/<qty>")
 def generate(qty):
