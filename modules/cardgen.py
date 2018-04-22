@@ -11,6 +11,13 @@ csv_name = 'data/cards.csv'
 HP_vals = [1]*3 + [2]*5 + [3]*5 + [4]*4 + [5]*3 + [6]*2 + [7]*2 + [8] + [9] + [10]
 EFFs = ['Charge'] * 15 + ['Ward'] * 15
 
+class IdGenerator:
+    current_id = 0
+    @classmethod
+    def generate_id(cls):
+        cls.current_id += 1
+        return cls.current_id
+
 # Generates new cards
 def generate_cards(num_cards):
     try:
@@ -52,12 +59,12 @@ def generate_cards(num_cards):
     response = {'cards': []}
     for index, card in results.iterrows():
         response['cards'].append({})
-        response['cards'][index]['NAME'] = card['NAME']
-        response['cards'][index]['POW'] = card['POW']
-        response['cards'][index]['HP'] = card['HP']
-        response['cards'][index]['CLK'] = card['CLK']
-        response['cards'][index]['EFF'] = card['EFF']
-        response['cards'][index]['IMG'] = card['IMG']
+        response['cards'][index]['id'] = IdGenerator.generate_id()
+        response['cards'][index]['name'] = card['NAME']
+        response['cards'][index]['pow'] = card['POW']
+        response['cards'][index]['hp'] = card['HP']
+        response['cards'][index]['clk'] = card['CLK']
+        response['cards'][index]['eff'] = card['EFF']
+        response['cards'][index]['img'] = card['IMG']
 
     return json.dumps(response)
-
