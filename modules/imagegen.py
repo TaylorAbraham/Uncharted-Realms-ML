@@ -3,11 +3,12 @@ import random
 import re
 import modules.config as config
 
-# Connect API
-da = deviantart.Api(config.client_id, config.client_secret)
 
 # Provides a DeviantArt image URL related to a cardname
 def generate_image_url(cardname):
+    # Connect API
+    da = deviantart.Api(config.client_id, config.client_secret)
+
     deviations = {'results': []}
     tag_ = ""
     # For each word in the cardname, try and find a relevant DeviantArt tag
