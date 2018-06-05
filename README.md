@@ -10,3 +10,6 @@ While the server is running, open the web client using the instructions on the w
 
 ## How it's built
 The neural network for generating cards is built using Scikit Learn. A linear regression is created by fitting the stats of existing cards against their cost. Numerical values have a simple linear fit, but more complex stats like specific words had to be turn into numerical representations called "one hot". Cards were then generated for users to play games with, and these cards were then sent back to the network and were used to retrain the network and improve its confidence.
+
+## Client repository
+https://github.com/RyanAbraham/Uncharted-Realms
