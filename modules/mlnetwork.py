@@ -15,7 +15,6 @@ def predict_costs(card_dict):
     df = pd.concat([df, pd.get_dummies(df['EFF'])], axis=1)
     df = df.drop(['EFF'], axis=1) # Drop the old EFF feature
     print(df)
-    #print(df)
     X = df.drop(['CLK'], axis=1)
     y = df.CLK
 
