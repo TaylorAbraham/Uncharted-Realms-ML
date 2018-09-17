@@ -19,10 +19,9 @@ generating_cards = True
 class GenerationThread(threading.Thread):
     def run(self):
         global generating_cards
-        global card_queue
         while not card_queue.full():
             card_queue.put(cardgen.generate_card())
-            print(card_queue.qsize())
+            print("Card generated! Now " + str(card_queue.qsize()) + " in queue")
         print("Queue filled!")
         generating_cards = False
 
