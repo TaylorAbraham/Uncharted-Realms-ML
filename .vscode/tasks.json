@@ -1,0 +1,14 @@
+{
+    "tasks": [
+        {
+            "label": "Start Server",
+            "type": "shell",
+            "command": "./venv/Scripts/activate; python server.py",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
