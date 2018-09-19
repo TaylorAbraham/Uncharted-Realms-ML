@@ -3,6 +3,7 @@ import random
 import json
 from multiprocessing import Queue
 from multiprocessing import Process
+from multiprocessing import Value
 from requests.exceptions import ConnectionError
 from urllib.error import URLError
 # Local libraries
@@ -18,7 +19,7 @@ QUEUE_SIZE = 200
 
 class CardGen:
     card_queue = Queue(QUEUE_SIZE)
-    generating_cards = False
+    generating_cards = Value('i', False)
     current_id = 0
     @classmethod
     def generate_id(cls):
@@ -83,17 +84,18 @@ class CardGen:
             while self.card_queue.empty():
                 pass
             cards.append(self.card_queue.get())
+        self.start_card_generation()
         return cards
 
     def start_card_generation(self):
-        if(not self.generating_cards):
-            gen_p = Process(target=self.generate_cards, args=(self.card_queue,))
+        if(not self.generating_cards.value):
+            gen_p = Process(target=self.generate_cards, args=(self.card_queue, self.generating_cards,))
             gen_p.start()
-            self.generating_cards = True
+            self.generating_cards.value = True
 
-    def generate_cards(self, card_queue):
+    def generate_cards(self, card_queue, generating_cards):
         while not card_queue.full():
             card_queue.put(self.get_card())
             print("Card generated! Now " + str(card_queue.qsize()) + " in queue")
         print("Queue filled!")
-        self.generating_cards = False
+        generating_cards.value = False
