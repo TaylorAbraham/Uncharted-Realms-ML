@@ -37,7 +37,7 @@ class CardGen:
         if(names == []):
             try:
                 names = namegen.generate_names()
-            except ConnectionError:
+            except (ConnectionError, ConnectionAbortedError):
                 names = ['MISSINGNO.'] * 5
                 print("Could not connect to name generation service")
         name = random.choice(names)
