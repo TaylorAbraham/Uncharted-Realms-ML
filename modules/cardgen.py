@@ -6,6 +6,7 @@ from multiprocessing import Process
 from multiprocessing import Value
 from requests.exceptions import ConnectionError
 from urllib.error import URLError
+from urllib.error import HTTPError
 # Local libraries
 import modules.namegen as namegen
 import modules.imagegen as imagegen
@@ -18,8 +19,6 @@ EFFs = ['Charge'] * 15 + ['Ward'] * 15
 QUEUE_SIZE = 200
 
 class CardGen:
-    card_queue = Queue(QUEUE_SIZE)
-    generating_cards = Value('i', False)
     current_id = 0
     @classmethod
     def generate_id(cls):
@@ -37,7 +36,7 @@ class CardGen:
         if(names == []):
             try:
                 names = namegen.generate_names()
-            except (ConnectionError, ConnectionAbortedError):
+            except (ConnectionError, ConnectionAbortedError, HTTPError):
                 names = ['MISSINGNO.'] * 5
                 print("Could not connect to name generation service")
         name = random.choice(names)
@@ -65,8 +64,8 @@ class CardGen:
 
         results = mlnetwork.predict_costs(card_dict)
 
-        # Build the JSON for the response
-        for index, card in results.iterrows():
+        # Return all generated cards
+        for _, card in results.iterrows():
             generated_card = {}
             generated_card['id'] = self.generate_id()
             generated_card['name'] = card['NAME']
@@ -81,21 +80,5 @@ class CardGen:
     def get_cards(self, qty):
         cards = []
         for x in range(0, qty):
-            while self.card_queue.empty():
-                pass
-            cards.append(self.card_queue.get())
-        self.start_card_generation()
+            cards.append(self.get_card())
         return cards
-
-    def start_card_generation(self):
-        if(not self.generating_cards.value):
-            gen_p = Process(target=self.generate_cards, args=(self.card_queue, self.generating_cards,))
-            gen_p.start()
-            self.generating_cards.value = True
-
-    def generate_cards(self, card_queue, generating_cards):
-        while not card_queue.full():
-            card_queue.put(self.get_card())
-            print("Card generated! Now " + str(card_queue.qsize()) + " in queue")
-        print("Queue filled!")
-        generating_cards.value = False
